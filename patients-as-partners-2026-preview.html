@@ -8,7 +8,7 @@
   <meta name="description" content="Connect with PatientPartner at Patients as Partners® in Clinical Research 2026 in Boston. Schedule a 1-on-1 to discuss peer mentorship, clinical trial engagement, and PerfectPatient AI.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@700;800&display=swap" rel="stylesheet">
   <style>
     /* ── Reset ── */
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -37,7 +37,8 @@
     }
 
     h1, h2, h3, h4 {
-      font-family: 'Georgia', 'Times New Roman', serif;
+      font-family: 'Manrope', 'Inter', sans-serif;
+      font-weight: 700;
       color: var(--pp-navy);
       line-height: 1.2;
     }
@@ -73,17 +74,14 @@
     }
 
     .navbar__logo {
-      font-family: 'Georgia', serif;
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--pp-navy);
       text-decoration: none;
+      display: flex;
+      align-items: center;
     }
 
-    .navbar__logo .dot {
-      color: var(--pp-teal);
-      font-size: 10px;
-      vertical-align: super;
+    .navbar__logo img {
+      height: 32px;
+      width: auto;
     }
 
     .navbar__right {
@@ -216,7 +214,7 @@
     }
 
     .stat__number {
-      font-family: 'Georgia', serif;
+      font-family: 'Manrope', 'Inter', sans-serif;
       font-size: 40px;
       font-weight: 700;
       color: var(--pp-teal);
@@ -400,7 +398,7 @@
     }
 
     .quote-mark {
-      font-family: 'Georgia', serif;
+      font-family: 'Manrope', 'Inter', sans-serif;
       font-size: 60px;
       color: var(--pp-teal);
       opacity: 0.3;
@@ -438,7 +436,7 @@
     }
 
     .mini-stat__number {
-      font-family: 'Georgia', serif;
+      font-family: 'Manrope', 'Inter', sans-serif;
       font-size: 28px;
       font-weight: 700;
       color: var(--pp-teal);
@@ -617,14 +615,11 @@
       border-bottom: 1px solid rgba(255,255,255,0.12);
     }
 
-    .footer__logo {
-      font-family: 'Georgia', serif;
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--pp-white);
+    .footer__logo img {
+      height: 28px;
+      width: auto;
+      filter: brightness(0) invert(1);
     }
-
-    .footer__logo .dot { color: var(--pp-teal); font-size: 10px; vertical-align: super; }
 
     .footer__tagline {
       font-size: 13px;
@@ -713,7 +708,7 @@
   <!-- ════════ NAVBAR ════════ -->
   <nav class="navbar">
     <div class="container">
-      <a href="#" class="navbar__logo">PatientPartner<span class="dot">&bull;</span></a>
+      <a href="#" class="navbar__logo"><img src="patientpartner-logo.png" alt="PatientPartner"></a>
       <div class="navbar__right">
         <a href="#about" class="navbar__link">About the Event</a>
         <a href="#why-meet" class="navbar__link">Why Meet With Us</a>
@@ -923,7 +918,7 @@
     <div class="container">
       <div class="footer__top">
         <div>
-          <div class="footer__logo">PatientPartner<span class="dot">&bull;</span></div>
+          <div class="footer__logo"><img src="patientpartner-logo.png" alt="PatientPartner"></div>
           <p class="footer__tagline">Real Support, Real Time, Real Outcomes</p>
         </div>
         <div class="footer__links">
