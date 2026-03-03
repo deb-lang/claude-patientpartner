@@ -1,0 +1,154 @@
+Generate a branded PatientPartner landing page. Usage: /landing-page [type] [title] [options]
+
+Types: webinar | event | lead-magnet
+
+$ARGUMENTS
+
+---
+
+You are generating a PatientPartner branded landing page. Follow these instructions exactly.
+
+## Step 1: Parse Arguments
+
+Parse $ARGUMENTS for:
+- **type**: webinar, event, or lead-magnet (required)
+- **title**: page/resource title (required)
+- **date**: event/webinar date and time (required for webinar/event)
+- **speaker**: speaker or host name and title (for webinar/event)
+- **description**: 1–2 sentence description of the content
+- **cta**: call-to-action button text (default: "Reserve Your Spot" for webinar, "Register Now" for event, "Download Now" for lead-magnet)
+- **output**: filename for the HTML file (default: derived from title)
+
+If **type** or **title** are missing, ask the user for them before proceeding.
+
+## Step 2: PatientPartner Brand Tokens
+
+Always use these exact values in the generated CSS:
+
+```
+Primary Teal:    #74CCD3
+Dark Navy:       #314D69
+Light Teal:      #DDF7F9
+Deep Teal:       #188F8B
+White:           #FFFFFF
+Gray Light:      #F7F9FC
+Gray Text:       #6B7280
+
+Heading font:    'Georgia', 'Times New Roman', serif  (Utopia Std fallback)
+Body font:       'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif  (HK Grotesk fallback)
+
+Border radius:   8px (cards), 4px (buttons, inputs)
+Shadow:          0 2px 16px rgba(49,77,105,0.10)
+```
+
+## Step 3: Generate the HTML File
+
+Create a single self-contained HTML file with inline `<style>` (no external CSS dependencies). The file must be fully responsive (mobile-first).
+
+### Required Sections for ALL page types:
+
+**A. Navigation Bar**
+- PatientPartner logo text (left): `<span>PatientPartner</span>` styled in navy with a teal dot/accent
+- CTA button (right): same as main CTA
+- Sticky on scroll
+
+**B. Hero Section**
+- Background: Light teal (#DDF7F9) or teal-to-white gradient
+- Large headline (the title, 36–48px on desktop)
+- Subheadline (description or value prop)
+- Primary CTA button (teal background, white text, rounded)
+- For webinar/event: display date/time prominently below headline
+- For lead-magnet: show a resource mockup div (styled placeholder box representing a report/PDF)
+
+**C. Trust Bar / Social Proof Strip**
+- Background: white, thin section
+- Show 3 stats from PatientPartner proof points, e.g.:
+  - "68% increase in new patient starts"
+  - "1,000+ trained mentors"
+  - "100+ health conditions supported"
+- Or use stats relevant to the page topic
+
+**D. Content Section** (varies by type — see Step 4)
+
+**E. Form Section**
+- Background: Light teal (#DDF7F9)
+- Headline: "Secure Your Spot" (webinar/event) or "Get Instant Access" (lead-magnet)
+- Form fields (see Step 4 for fields by type)
+- Submit button: full-width, teal, white text
+- Privacy note below button: "Your information is kept private and secure. HIPAA-compliant."
+- Compliance badges below form: HIPAA | SOC 2 | ISO 27001
+
+**F. Footer**
+- Background: Navy (#314D69), white text
+- Left: PatientPartner name + tagline: "Real Support, Real Time, Real Outcomes"
+- Right: links — Privacy Policy | Terms & Conditions
+- Bottom: © 2026 PatientPartner. All rights reserved.
+
+### Step 4: Page Type Variations
+
+#### WEBINAR
+Content Section:
+- 2-column layout: left = agenda/topics list (3–5 bullet points with teal checkmarks), right = speaker bio card
+- Speaker bio card: avatar placeholder circle, name, title, 2-sentence bio
+- "What You'll Learn" section with 3 benefit cards (white cards with teal icon placeholder)
+- Add a countdown timer div (static display of date for now, labeled "Event starts in:")
+
+Form fields: First Name | Last Name | Email | Company | Job Title | [Submit]
+
+#### EVENT
+Content Section:
+- Event details card: Date, Time, Format (Virtual/In-Person), Location
+- Agenda section: numbered list of sessions/topics
+- Speaker cards: grid of 2–4 speaker cards (photo placeholder, name, title, company)
+- "Why Attend" section: 3 benefit bullets
+
+Form fields: First Name | Last Name | Email | Company | Job Title | [Submit]
+
+#### LEAD MAGNET
+Content Section:
+- Resource preview: large styled box (navy background, teal accent) showing title of resource + "Inside this report:" bullet list
+- 3 benefit/takeaway cards in a row (white cards, teal left border)
+- Testimonial quote block (use one of the real PP testimonials)
+
+Form fields: First Name | Last Name | Work Email | [Submit]
+(Fewer fields = lower friction for lead magnets)
+
+### Step 5: Additional HTML Requirements
+
+- `<meta name="viewport" content="width=device-width, initial-scale=1.0">`
+- `<title>` tag set to the page title
+- All buttons must have `:hover` states (slightly darker shade)
+- All form inputs must have `:focus` states (teal outline)
+- Images: use `<div>` placeholders with background colors and centered text labels like `[Speaker Photo]` or `[Resource Cover]`
+- Add `<!-- PatientPartner Landing Page | Generated by Claude -->` comment at top
+
+## Step 6: Save the File
+
+Determine the filename:
+- If output argument was provided, use that
+- Otherwise, slugify the title: lowercase, spaces to hyphens, remove special chars
+- Append `-landing-page.html`
+- Example: "2026 Patient Engagement Webinar" → `2026-patient-engagement-webinar-landing-page.html`
+
+Use the Write tool to save the file in the current working directory.
+
+## Step 7: Summarize
+
+After saving, tell the user:
+1. The filename and path where it was saved
+2. A brief description of what was generated (sections included)
+3. Ask: "Would you also like me to generate companion copy for this page? Options: (a) promotional email, (b) LinkedIn/social post, (c) both"
+
+## PatientPartner Copy Guidelines (use throughout)
+
+**Tone:** Warm, conversational, professional. Never pushy. Never clinical/cold.
+**Focus:** Pharma + clinical trial audiences (Directors, VPs of Patient Marketing, Patient Services, Innovation)
+**Avoid:** Surgery references, old taglines, shame-based language
+**Use:** Real stats, real patient voice, compliance language, outcome-focused messaging
+
+**Proof points available to use:**
+- "1 in 4 patients would be more likely to start treatment if they could talk to someone who's already been on it"
+- "68% of patients abandon new prescriptions without early support"
+- "Patients remain on therapy 133.5 days longer with peer mentorship"
+- "22% improvement in treatment adherence"
+- "72% of patients who connected with a mentor took the next step"
