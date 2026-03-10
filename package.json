@@ -7,7 +7,10 @@
   "scripts": {
     "generate": "node scripts/generate-images.mjs",
     "generate:carousel": "node scripts/generate-images.mjs --carousel",
-    "generate:atoms": "node scripts/generate-images.mjs --atoms"
+    "generate:atoms": "node scripts/generate-images.mjs --atoms",
+    "generate:lora": "node scripts/generate-images.mjs --lora",
+    "train": "node scripts/train-brand-lora.mjs",
+    "train:help": "node scripts/train-brand-lora.mjs --help"
   },
   "repository": {
     "type": "git",

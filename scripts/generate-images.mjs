@@ -14,12 +14,27 @@
  *   --platform linkedin|instagram|twitter    Target platform
  *   --output dir  Output directory (default: ./output)
  *   --model flux|ideogram  Model to use (default: ideogram for text-heavy, flux for photo)
+ *   --lora        Use trained PatientPartner brand LoRA (reads ./brand-lora-config.json)
+ *   --lora-scale  LoRA strength 0.0–1.0 (default: 0.85)
+ *   --style-ref   Comma-separated URLs of style reference images (for Ideogram v3)
  *   --dry-run     Print prompts without calling fal.ai
  */
 
 import { fal } from "@fal-ai/client";
-import { writeFile, mkdir } from "fs/promises";
+import { writeFile, readFile, mkdir } from "fs/promises";
 import { join } from "path";
+
+// ──────────────────────────────────────────────
+// Brand LoRA config loader
+// ──────────────────────────────────────────────
+async function loadLoraConfig() {
+  try {
+    const raw = await readFile("./brand-lora-config.json", "utf-8");
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
 
 // ──────────────────────────────────────────────
 // Brand Tokens
@@ -331,28 +346,59 @@ const CAROUSEL_CONTENT = [
 // Image generation via fal.ai
 // ──────────────────────────────────────────────
 
-async function generateImage(prompt, { width, height, model = "ideogram", outputPath }) {
-  const modelId = model === "flux"
-    ? "fal-ai/flux/dev"
-    : "fal-ai/ideogram/v3";
+async function generateImage(prompt, { width, height, model = "ideogram", outputPath, loraConfig = null, loraScale = 0.85, styleRefUrls = [] }) {
+  let modelId;
+  if (loraConfig) {
+    // Use trained LoRA model
+    modelId = loraConfig.inferenceModel;
+    prompt = `${loraConfig.triggerWord} style, ${prompt}`;
+  } else {
+    modelId = model === "flux" ? "fal-ai/flux/dev" : "fal-ai/ideogram/v3";
+  }
 
-  const input = model === "flux"
-    ? {
-        prompt,
-        image_size: { width, height },
-        num_images: 1,
-        num_inference_steps: 28,
-        guidance_scale: 3.5,
-      }
-    : {
-        prompt,
-        image_size: { width, height },
-        style_type: "DESIGN",
-        rendering_speed: "BALANCED",
-        num_images: 1,
-      };
+  let input;
+  if (loraConfig) {
+    // FLUX + LoRA
+    input = {
+      prompt,
+      image_size: { width, height },
+      num_images: 1,
+      num_inference_steps: 28,
+      guidance_scale: 3.5,
+      loras: [{ path: loraConfig.loraUrl, scale: loraScale }],
+    };
+  } else if (model === "flux") {
+    input = {
+      prompt,
+      image_size: { width, height },
+      num_images: 1,
+      num_inference_steps: 28,
+      guidance_scale: 3.5,
+    };
+  } else {
+    // Ideogram v3
+    input = {
+      prompt,
+      image_size: { width, height },
+      style_type: "DESIGN",
+      rendering_speed: "BALANCED",
+      num_images: 1,
+      color_palette: {
+        members: [
+          { hex: "#314D69", weight: 0.4 },
+          { hex: "#74CCD3", weight: 0.3 },
+          { hex: "#DDF7F9", weight: 0.2 },
+          { hex: "#FFFFFF", weight: 0.1 },
+        ],
+      },
+    };
+    // Add style reference images if provided
+    if (styleRefUrls.length > 0) {
+      input.style_reference_images = styleRefUrls.map((url) => ({ url }));
+    }
+  }
 
-  console.log(`  Generating with ${modelId} (${width}×${height})...`);
+  console.log(`  Generating with ${modelId}${loraConfig ? " + LoRA" : ""}${styleRefUrls.length ? ` + ${styleRefUrls.length} style refs` : ""} (${width}×${height})...`);
 
   const result = await fal.subscribe(modelId, {
     input,
@@ -393,6 +439,31 @@ async function main() {
   await mkdir(outputDir, { recursive: true });
 
   const dryRun = flags.has("--dry-run");
+  const useLora = flags.has("--lora");
+  const loraScale = args.includes("--lora-scale")
+    ? parseFloat(args[args.indexOf("--lora-scale") + 1])
+    : 0.85;
+  const styleRefUrls = args.includes("--style-ref")
+    ? args[args.indexOf("--style-ref") + 1].split(",")
+    : [];
+
+  // Load LoRA config if requested
+  let loraConfig = null;
+  if (useLora) {
+    loraConfig = await loadLoraConfig();
+    if (!loraConfig) {
+      console.error("Error: --lora specified but no brand-lora-config.json found.");
+      console.error("Run: node scripts/train-brand-lora.mjs --images <your-brand-images.zip>");
+      process.exit(1);
+    }
+    console.log(`\n  Using trained LoRA: ${loraConfig.triggerWord} (scale: ${loraScale})`);
+    console.log(`  Inference model: ${loraConfig.inferenceModel}\n`);
+  }
+
+  if (styleRefUrls.length > 0) {
+    console.log(`\n  Using ${styleRefUrls.length} style reference image(s) for Ideogram v3\n`);
+  }
+
   const runAll = flags.has("--all") || (!flags.has("--carousel") && !flags.has("--atoms") && !flags.has("--prompt"));
   const runCarousel = flags.has("--carousel") || runAll;
   const runAtoms = flags.has("--atoms") || runAll;
@@ -413,7 +484,11 @@ async function main() {
 
     await generateImage(prompt, {
       ...dims,
+      model: loraConfig ? "flux" : "ideogram",
       outputPath: join(outputDir, `custom-${platform}-${Date.now()}.png`),
+      loraConfig,
+      loraScale,
+      styleRefUrls,
     });
     return;
   }
@@ -437,7 +512,14 @@ async function main() {
       }
 
       try {
-        const result = await generateImage(prompt, { ...dims, outputPath });
+        const result = await generateImage(prompt, {
+          ...dims,
+          model: loraConfig ? "flux" : "ideogram",
+          outputPath,
+          loraConfig,
+          loraScale,
+          styleRefUrls,
+        });
         results.push({ ...atom, ...result });
       } catch (err) {
         console.error(`  ✗ Failed: ${err.message}`);
@@ -463,7 +545,14 @@ async function main() {
       }
 
       try {
-        const result = await generateImage(prompt, { ...dims, outputPath });
+        const result = await generateImage(prompt, {
+          ...dims,
+          model: loraConfig ? "flux" : "ideogram",
+          outputPath,
+          loraConfig,
+          loraScale,
+          styleRefUrls,
+        });
         results.push({ ...slide, ...result });
       } catch (err) {
         console.error(`  ✗ Failed: ${err.message}`);
