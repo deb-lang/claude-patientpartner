@@ -7,7 +7,14 @@ $ARGUMENTS
 
 ---
 
-You are generating branded PatientPartner social media image posts as self-contained HTML files (designed to be screenshotted or exported as images). Follow these instructions exactly.
+You are generating branded PatientPartner social media image posts. You have TWO output modes:
+
+1. **HTML mode** (default): Self-contained HTML files at exact pixel dimensions — useful for editing text, previewing in browser, and manual screenshots.
+2. **fal.ai mode** (`--render`): Generate final PNG images using fal.ai Ideogram v3 (best text rendering) or FLUX dev (best photorealism). Requires `FAL_KEY` environment variable.
+
+When the user asks for "images", "PNGs", "final output", or includes `--render`, use fal.ai mode. Otherwise default to HTML mode.
+
+Follow these instructions exactly.
 
 ## Step 1: Parse Arguments
 
@@ -314,3 +321,112 @@ When the user asks for topic suggestions (or when suggesting in Step 9), draw fr
 - Event recaps
 
 Use WebSearch with queries like `"patient engagement trends 2026"`, `"pharma patient support programs"`, `"clinical trial retention strategies"` to find fresh angles and timely hooks.
+
+---
+
+## Step 11: Render to PNG with fal.ai (when `--render` is specified or user wants images)
+
+When the user wants final PNG images instead of HTML, use fal.ai to generate them.
+
+### Option A: Run the generation script
+
+If the content matches pre-built atoms or carousel slides, run:
+
+```bash
+FAL_KEY=$FAL_KEY node scripts/generate-images.mjs --atoms     # atomized assets
+FAL_KEY=$FAL_KEY node scripts/generate-images.mjs --carousel  # carousel slides
+FAL_KEY=$FAL_KEY node scripts/generate-images.mjs --all       # everything
+```
+
+Images are saved to `./output/` as PNG files.
+
+### Option B: Generate inline via fal.ai API (for custom/one-off images)
+
+Use Bash to run a fal.ai call for any custom prompt. Build the prompt using these rules:
+
+**Prompt Structure for Ideogram v3 (text-heavy images):**
+```
+Professional social media graphic for "PatientPartner",
+[background description using brand colors],
+[text layout: headline, stat, body — specify fonts, sizes, colors],
+[decorative elements: accent lines, badges, shapes],
+[footer: patientpartner.com],
+No photos, no people — purely typographic layout.
+Modern healthcare SaaS design, clean minimalist, premium corporate.
+```
+
+**Prompt Structure for FLUX dev (photo-enhanced images):**
+```
+Professional healthcare social media image,
+[visual scene: warm photography, diverse patients, soft lighting],
+[text overlay: headline in Georgia serif, stat in teal],
+[PatientPartner branding: teal #74CCD3 and navy #314D69 accents],
+Photorealistic, professional quality, warm and approachable.
+```
+
+**fal.ai inline call (Node.js):**
+```javascript
+import { fal } from "@fal-ai/client";
+
+const result = await fal.subscribe("fal-ai/ideogram/v3", {
+  input: {
+    prompt: "YOUR PROMPT HERE",
+    image_size: { width: 1200, height: 1200 },
+    style_type: "DESIGN",
+    rendering_speed: "BALANCED",
+    num_images: 1,
+  },
+});
+// result.data.images[0].url → the generated image URL
+```
+
+**Bash one-liner for quick generation:**
+```bash
+node -e "
+import { fal } from '@fal-ai/client';
+const r = await fal.subscribe('fal-ai/ideogram/v3', {
+  input: {
+    prompt: \`PROMPT_HERE\`,
+    image_size: { width: WIDTH, height: HEIGHT },
+    style_type: 'DESIGN',
+    rendering_speed: 'BALANCED',
+    num_images: 1,
+  }
+});
+const resp = await fetch(r.data.images[0].url);
+const buf = Buffer.from(await resp.arrayBuffer());
+await import('fs').then(fs => fs.promises.writeFile('output/FILENAME.png', buf));
+console.log('Saved: output/FILENAME.png');
+"
+```
+
+### Model Selection Guide:
+| Content Type | Best Model | Why |
+|---|---|---|
+| Stat posts (text-heavy) | `fal-ai/ideogram/v3` | 95% text accuracy, perfect typography |
+| Quote images | `fal-ai/ideogram/v3` | Handles long quotes and attributions |
+| Tip cards | `fal-ai/ideogram/v3` | Multiple text blocks rendered cleanly |
+| Carousel slides | `fal-ai/ideogram/v3` | Complex layouts with numbered steps |
+| Photo-enhanced posts | `fal-ai/flux/dev` | Photorealistic backgrounds and people |
+| Infographics | `fal-ai/ideogram/v3` | Multiple stats + text blocks |
+
+### Color Palette Hint for Ideogram v3:
+When calling Ideogram v3, you can optionally pass a `color_palette` to enforce brand colors:
+```json
+{
+  "color_palette": {
+    "members": [
+      { "hex": "#314D69", "weight": 0.4 },
+      { "hex": "#74CCD3", "weight": 0.3 },
+      { "hex": "#DDF7F9", "weight": 0.2 },
+      { "hex": "#FFFFFF", "weight": 0.1 }
+    ]
+  }
+}
+```
+
+### After rendering, tell the user:
+1. Which model was used and why
+2. File paths to the generated PNGs in `./output/`
+3. Note that text accuracy is ~95% — recommend reviewing text and regenerating any slides with errors
+4. Offer to regenerate specific images with adjusted prompts if text isn't right

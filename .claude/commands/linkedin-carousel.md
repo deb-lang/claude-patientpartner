@@ -242,3 +242,64 @@ Then suggest:
 
 **Related topic suggestions** (always provide 3):
 Use the content pillars from Step 2 and WebSearch to suggest 3 carousel topics that complement the one just created.
+
+---
+
+## Step 9: Render to PNG with fal.ai (when user wants final images)
+
+When the user wants final PNG carousel images (not just HTML), use fal.ai Ideogram v3 for rendering.
+
+### Quick method — run the generation script:
+```bash
+FAL_KEY=$FAL_KEY node scripts/generate-images.mjs --carousel
+```
+This generates all 8 carousel slides as PNGs in `./output/`.
+
+### Manual method — generate per-slide via fal.ai:
+
+For each carousel slide, build a prompt following this template:
+
+```
+Professional LinkedIn carousel slide (portrait 4:5) for "PatientPartner",
+[background: navy/white/light teal per slide color scheme],
+modern healthcare SaaS design, clean minimalist layout, premium corporate feel.
+Small "PatientPartner" wordmark top left.
+Round slide number badge "[N]" top right.
+[Section label in uppercase above headline].
+Bold headline in [color] Georgia serif: "[headline text]"
+Body text in [color] Inter sans-serif: "[body text]"
+[Extras: stat callouts, step cards, quote blocks, stat grids — as needed]
+[Swipe → indicator bottom right if not last slide].
+Progress dots at bottom left showing slide N of 8.
+No photos, no people — purely typographic healthcare design.
+```
+
+**fal.ai call:**
+```javascript
+import { fal } from "@fal-ai/client";
+
+const result = await fal.subscribe("fal-ai/ideogram/v3", {
+  input: {
+    prompt: "YOUR SLIDE PROMPT",
+    image_size: { width: 1080, height: 1350 },
+    style_type: "DESIGN",
+    rendering_speed: "BALANCED",
+    num_images: 1,
+    color_palette: {
+      members: [
+        { hex: "#314D69", weight: 0.4 },
+        { hex: "#74CCD3", weight: 0.3 },
+        { hex: "#DDF7F9", weight: 0.2 },
+        { hex: "#FFFFFF", weight: 0.1 }
+      ]
+    }
+  },
+});
+// Download result.data.images[0].url and save as PNG
+```
+
+### After rendering:
+1. Show file paths to all generated PNGs
+2. Note that Ideogram v3 has ~95% text accuracy — recommend reviewing
+3. Offer to regenerate any slides with text errors
+4. Remind user the HTML versions are also available for manual text editing

@@ -293,4 +293,55 @@ Suggest a posting schedule:
 (b) Generate a full LinkedIn carousel from this content (/linkedin-carousel)
 (c) Create a landing page to drive traffic to (/landing-page)
 (d) Atomize another piece of content
-(e) Get fresh topic suggestions"
+(e) Get fresh topic suggestions
+(f) Render all assets to PNG using fal.ai"
+
+---
+
+## Step 9: Render to PNG with fal.ai
+
+When the user chooses option (f) or explicitly asks for images/PNGs, render all atomized assets using fal.ai.
+
+### Quick method:
+```bash
+FAL_KEY=$FAL_KEY node scripts/generate-images.mjs --atoms
+```
+
+### Per-asset method:
+For each asset, build a fal.ai prompt based on the asset type (stat, quote, tip, question) and call Ideogram v3:
+
+```javascript
+import { fal } from "@fal-ai/client";
+
+const result = await fal.subscribe("fal-ai/ideogram/v3", {
+  input: {
+    prompt: "YOUR ASSET PROMPT",
+    image_size: { width: PLATFORM_WIDTH, height: PLATFORM_HEIGHT },
+    style_type: "DESIGN",
+    rendering_speed: "BALANCED",
+    num_images: 1,
+    color_palette: {
+      members: [
+        { hex: "#314D69", weight: 0.4 },
+        { hex: "#74CCD3", weight: 0.3 },
+        { hex: "#DDF7F9", weight: 0.2 },
+        { hex: "#FFFFFF", weight: 0.1 }
+      ]
+    }
+  },
+});
+```
+
+### Model selection:
+- **Text-heavy posts** (stat, quote, tip, question): Use `fal-ai/ideogram/v3` — 95% text accuracy
+- **Photo-enhanced posts**: Use `fal-ai/flux/dev` — photorealistic quality
+
+### Platform dimensions:
+| Platform | Width | Height |
+|---|---|---|
+| LinkedIn | 1200 | 1200 |
+| Instagram | 1080 | 1080 |
+| Twitter | 1600 | 900 |
+| Facebook | 1200 | 630 |
+
+All PNGs are saved to `./output/`. Review text accuracy and regenerate any with errors.

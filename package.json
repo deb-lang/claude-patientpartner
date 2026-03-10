@@ -1,0 +1,22 @@
+{
+  "name": "claude-patientpartner",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "generate": "node scripts/generate-images.mjs",
+    "generate:carousel": "node scripts/generate-images.mjs --carousel",
+    "generate:atoms": "node scripts/generate-images.mjs --atoms"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://local_proxy@127.0.0.1:34173/git/deb-lang/claude-patientpartner"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@fal-ai/client": "^1.9.4"
+  }
+}
