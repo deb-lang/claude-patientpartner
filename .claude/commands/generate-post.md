@@ -13,7 +13,7 @@ Parse $ARGUMENTS for:
 - **platform**: linkedin (default), instagram, twitter, all
 - **type**: stat | quote | tip | question | announcement (default: auto-select best from research)
 - **slides**: number of carousel slides (default: 6, range: 4–10)
-- **render**: if "--render" present, generate PNG images via fal.ai with brand LoRA
+- **render**: ALWAYS ON by default — generates PNG images via fal.ai with ppbrand LoRA. Use "--html-only" to skip rendering and output HTML instead
 - **drive**: if "--drive" present, attempt to upload outputs to Google Drive
 
 If **topic** is missing, ask the user before proceeding.
@@ -208,7 +208,9 @@ Output in a clearly labeled code block:
 
 **Goal:** Render PNG images using fal.ai + trained PatientPartner brand LoRA.
 
-This step runs automatically when `--render` is included, or when the user asks for "images", "PNGs", or "final output".
+This step runs AUTOMATICALLY by default. It is ALWAYS executed unless `--html-only` is explicitly passed. The ppbrand LoRA from HuggingFace generates actual PNG images — not HTML mockups.
+
+**IMPORTANT:** If the fal.ai API is unreachable from the current environment (e.g., no outbound network), generate a ready-to-run render script at `scripts/render-[topic-slug].mjs` that the user can execute locally with `node scripts/render-[topic-slug].mjs`. The script must load FAL_KEY from `.env` via dotenv.
 
 ### Brand LoRA Configuration
 The trained PatientPartner LoRA is configured in `./brand-lora-config.json`:
