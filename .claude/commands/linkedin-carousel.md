@@ -249,11 +249,14 @@ Use the content pillars from Step 2 and WebSearch to suggest 3 carousel topics t
 
 When the user wants final PNG carousel images (not just HTML), use fal.ai Ideogram v3 for rendering.
 
-### Quick method — run the generation script:
+### Brand LoRA (always use ppbrand)
+Prefix every prompt with `ppbrand style,` to activate the trained PatientPartner LoRA at `debbeefernandez/claude-patientpartner`.
+
+### Quick method — run the generation script (with brand LoRA):
 ```bash
-FAL_KEY=$FAL_KEY node scripts/generate-images.mjs --carousel
+FAL_KEY=$FAL_KEY node scripts/generate-images.mjs --lora --lora-scale 0.85 --carousel
 ```
-This generates all 8 carousel slides as PNGs in `./output/`.
+This generates all carousel slides as PNGs in `./output/` using the trained ppbrand LoRA.
 
 ### Manual method — generate per-slide via fal.ai:
 

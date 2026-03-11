@@ -328,14 +328,21 @@ Use WebSearch with queries like `"patient engagement trends 2026"`, `"pharma pat
 
 When the user wants final PNG images instead of HTML, use fal.ai to generate them.
 
-### Option A: Run the generation script
+### Brand LoRA (always use ppbrand)
 
-If the content matches pre-built atoms or carousel slides, run:
+The trained PatientPartner LoRA is at `./brand-lora-config.json`:
+- **HuggingFace model:** `debbeefernandez/claude-patientpartner`
+- **Trigger word:** `ppbrand` — prefix ALL prompts with `ppbrand style,`
+- **LoRA scale:** 0.85 (adjust down to 0.7 for more creative freedom)
+
+### Option A: Run the generation script (with brand LoRA)
+
+Always pass `--lora` to activate the trained ppbrand LoRA:
 
 ```bash
-FAL_KEY=$FAL_KEY node scripts/generate-images.mjs --atoms     # atomized assets
-FAL_KEY=$FAL_KEY node scripts/generate-images.mjs --carousel  # carousel slides
-FAL_KEY=$FAL_KEY node scripts/generate-images.mjs --all       # everything
+FAL_KEY=$FAL_KEY node scripts/generate-images.mjs --lora --atoms     # atomized assets
+FAL_KEY=$FAL_KEY node scripts/generate-images.mjs --lora --carousel  # carousel slides
+FAL_KEY=$FAL_KEY node scripts/generate-images.mjs --lora --all       # everything
 ```
 
 Images are saved to `./output/` as PNG files.
@@ -364,17 +371,25 @@ Professional healthcare social media image,
 Photorealistic, professional quality, warm and approachable.
 ```
 
-**fal.ai inline call (Node.js):**
+**fal.ai inline call with ppbrand LoRA (Node.js):**
 ```javascript
 import { fal } from "@fal-ai/client";
+import { readFile } from "fs/promises";
 
-const result = await fal.subscribe("fal-ai/ideogram/v3", {
+// Load trained brand LoRA config
+const loraConfig = JSON.parse(await readFile('./brand-lora-config.json', 'utf-8'));
+
+// ALWAYS prefix prompt with trigger word
+const prompt = `${loraConfig.triggerWord} style, YOUR PROMPT HERE`;
+
+const result = await fal.subscribe(loraConfig.inferenceModel, {
   input: {
-    prompt: "YOUR PROMPT HERE",
+    prompt,
     image_size: { width: 1200, height: 1200 },
-    style_type: "DESIGN",
-    rendering_speed: "BALANCED",
     num_images: 1,
+    num_inference_steps: 28,
+    guidance_scale: 3.5,
+    loras: [{ path: loraConfig.loraUrl, scale: 0.85 }],
   },
 });
 // result.data.images[0].url → the generated image URL
