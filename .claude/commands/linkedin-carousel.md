@@ -65,6 +65,10 @@ Body font:          'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans
 Logo URL:           https://cdn.prod.website-files.com/67ab8a022edd6044d96d2597/688a131d24aa57007a344296_Asset%204%201.webp
 ```
 
+### CRITICAL Logo & Badge Rules
+- **Logo:** ALWAYS use the real logo `<img>` tag pointing to the Logo URL above with `style="max-height: 32px; filter: brightness(10);"` on dark backgrounds. NEVER create a fake logo using a teal square with the letter "P" — always use the actual image.
+- **No "LinkedIn Carousel" badge:** Do NOT add any visible "LinkedIn Carousel" label, badge, or tag to the slides. The slides should look like polished social content, not templates.
+
 ### Brand Voice (from PatientPartner Brand Guidelines)
 - **Tone:** Warm, conversational, professional. Never pushy or clinical.
 - **Voice:** Safe, Genuine, Helpful, Compassionate, Approachable, Inspiring

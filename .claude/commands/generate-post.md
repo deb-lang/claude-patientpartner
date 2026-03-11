@@ -104,6 +104,9 @@ Body font:       'Inter', sans-serif
 Logo URL:        https://cdn.prod.website-files.com/67ab8a022edd6044d96d2597/688a131d24aa57007a344296_Asset%204%201.webp
 ```
 
+### CRITICAL Logo Rule
+ALWAYS use the real logo `<img>` tag pointing to the Logo URL above. NEVER create a fake logo using a colored square with the letter "P" — always use the actual image. On dark backgrounds use `filter: brightness(10);` to make it white. No platform labels (e.g. "LinkedIn Carousel") should appear on the image.
+
 ### Carousel Structure (6 slides)
 
 **Slide 1 — HOOK (Navy bg)**
