@@ -1,0 +1,9 @@
+{
+  "loraUrl": "https://huggingface.co/debbeefernandez/claude-patientpartner",
+  "triggerWord": "ppbrand",
+  "trainerModel": "fal-ai/flux-lora-fast-training",
+  "inferenceModel": "fal-ai/flux-lora",
+  "steps": 1000,
+  "trainedAt": "2026-03-11T00:00:00.000Z",
+  "source": "huggingface"
+}
