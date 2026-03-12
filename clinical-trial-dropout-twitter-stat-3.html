@@ -27,32 +27,8 @@
     position: absolute;
     top: 40px;
     left: 60px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
   }
-  .logo-icon {
-    width: 36px;
-    height: 36px;
-    background: #74CCD3;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .logo-icon span {
-    color: #314D69;
-    font-family: Georgia, 'Times New Roman', serif;
-    font-size: 20px;
-    font-weight: bold;
-  }
-  .logo-text {
-    color: #FFFFFF;
-    font-family: 'Inter', sans-serif;
-    font-size: 17px;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-  }
+  .logo img { max-height: 32px; filter: brightness(10); }
   .left-col {
     flex: 1;
     padding-right: 80px;
@@ -110,9 +86,8 @@
 <body>
 <div class="container">
   <div class="logo">
-    <div class="logo-icon"><span>P</span></div>
-    <span class="logo-text">PatientPartner</span>
-  </div>
+      <img src="https://cdn.prod.website-files.com/67ab8a022edd6044d96d2597/688a131d24aa57007a344296_Asset%204%201.webp" alt="PatientPartner" style="max-height: 32px; filter: brightness(10);">
+    </div>
   <div class="left-col">
     <div class="headline">Patients stay on therapy 133.5 days longer with a peer mentor.</div>
     <div class="subtext">AI-powered matching connects trial participants with someone who's been through it — reducing anxiety, boosting retention, improving outcomes.</div>

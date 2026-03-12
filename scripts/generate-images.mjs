@@ -261,7 +261,7 @@ const CAROUSEL_CONTENT = [
       headline: "68% of patients abandon treatment without early support.",
       body: "Here's how peer mentorship is changing that — and why pharma leaders can't afford to ignore it.",
       bgColor: "navy",
-      extras: `Large teal stat "68%" above the headline in huge Georgia bold font. Small "LinkedIn Carousel" label badge in top right.`,
+      extras: `Large teal stat "68%" above the headline in huge Georgia bold font.`,
     }),
   },
   {
